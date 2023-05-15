@@ -1,42 +1,53 @@
-use std::collections::HashMap;
-
-struct Solution {}
+use std::collections::{HashMap};
+#[allow(dead_code)]
+struct Solution();
 
 impl Solution {
+    #[allow(dead_code)]
     pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
         let acc = nums.iter().enumerate().fold(
             HashMap::new(),
             |mut acc, (i, &n)| {
-                acc.entry(&n).or_insert(vec![]).push(i as i32);
+                acc.entry(n).or_insert(vec![]).push(i);
                 acc
             },
         );
-        
-        let res = acc.clone().into_iter().find_map(
-            |(num, idx)| match acc.get(&(target - num)) {
-                Some(&idxs) => {
-                    idxs.iter().find(|idx| if idx )
-                },
-                _ => None,
-            },
-        );
 
-        match res {
-            Some(v) => v,
-            None => panic!("{:?}", acc),
+        for (&num, idxs) in &acc {
+            let diff = target - num;
+            let &idx = idxs.first().unwrap();
+
+            let res = match acc.get(&diff) {
+                Some(other_idxs) => other_idxs.iter().find(|&&x| x != idx),
+                None => continue,
+            };
+
+            match res {
+                Some(&v) => return vec![idx as i32, v as i32],
+                None => continue,
+            }
+                
         }
+        panic!("No solution found")
+    }
 }
-}
+
 
 #[cfg(test)]
 mod tests {
+    fn check(nums: &Vec<i32>, target: i32) {
+        let res = super::Solution::two_sum(nums.to_owned(), target);
+        assert!(res.len() == 2);
+        assert!(res[0] != res[1]);
+        assert!(nums[res[0] as usize] + nums[res[1] as usize] == target);
+    }
     #[test]
-    fn should_return_0_1() {
-        assert_eq!(vec![0, 1], super::Solution::two_sum(vec![2, 7, 11, 15], 9));
+    fn simple() {
+        check(&vec![2, 7, 11, 15], 9);
     }
 
     #[test]
     fn should_also_return_0_1() {
-        assert_eq!(vec![0, 1], super::Solution::two_sum(vec![3, 3], 6));
+        check(&vec![3, 3], 6);
     }
 }
