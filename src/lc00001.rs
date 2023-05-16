@@ -1,17 +1,16 @@
-use std::collections::{HashMap};
-#[allow(dead_code)]
-struct Solution();
+use std::collections::HashMap;
+
+struct Solution;
 
 impl Solution {
-    #[allow(dead_code)]
     pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
-        let acc = nums.iter().enumerate().fold(
-            HashMap::new(),
-            |mut acc, (i, &n)| {
+        let acc = nums
+            .iter()
+            .enumerate()
+            .fold(HashMap::new(), |mut acc, (i, &n)| {
                 acc.entry(n).or_insert(vec![]).push(i);
                 acc
-            },
-        );
+            });
 
         for (&num, idxs) in &acc {
             let diff = target - num;
@@ -26,12 +25,10 @@ impl Solution {
                 Some(&v) => return vec![idx as i32, v as i32],
                 None => continue,
             }
-                
         }
         panic!("No solution found")
     }
 }
-
 
 #[cfg(test)]
 mod tests {
